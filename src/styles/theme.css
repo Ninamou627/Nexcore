@@ -124,59 +124,263 @@
     @apply border-border outline-ring/50;
   }
 
+  html {
+    min-height: 100%;
+  }
+
   body {
-    @apply bg-background text-foreground;
+    min-height: 100%;
+    @apply transition-colors duration-300;
     font-family: 'Outfit', sans-serif;
   }
 
-  /**
-  * Default typography styles for HTML elements (h1-h4, p, label, button, input).
-  * These are in @layer base, so Tailwind utility classes (like text-sm, text-lg) automatically override them.
-  */
-
-  html {
-    font-size: var(--font-size);
+  /* ================================================================
+     DARK MODE BACKGROUNDS
+     ================================================================ */
+  html:not(.light) body, .dark body {
+    background-image:
+      radial-gradient(circle at 10% 10%, rgba(59, 130, 246, 0.18), transparent 18%),
+      radial-gradient(circle at 85% 15%, rgba(79, 70, 229, 0.16), transparent 20%),
+      radial-gradient(circle at 20% 95%, rgba(14, 165, 233, 0.1), transparent 20%),
+      linear-gradient(180deg, #040b1f 0%, #02040b 100%);
+    background-attachment: fixed;
+    background-size: cover;
+    color: #e2e8f0;
   }
 
-  h1 {
-    font-size: var(--text-2xl);
-    font-weight: var(--font-weight-medium);
-    line-height: 1.5;
+  /* ================================================================
+     LIGHT MODE BACKGROUNDS
+     ================================================================ */
+  html.light body {
+    background-image:
+      radial-gradient(circle at 10% 10%, rgba(59, 130, 246, 0.05), transparent 20%),
+      radial-gradient(circle at 85% 15%, rgba(79, 70, 229, 0.05), transparent 25%),
+      linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+    background-attachment: fixed;
+    background-size: cover;
+    color: #0f172a;
   }
 
-  h2 {
-    font-size: var(--text-xl);
-    font-weight: var(--font-weight-medium);
-    line-height: 1.5;
+  /* ================================================================
+     GLASS SHELL - Dark (default)
+     ================================================================ */
+  .glass-shell {
+    position: relative;
+    min-height: 100vh;
+    color: #eef2ff;
+    @apply transition-colors duration-500;
   }
 
-  h3 {
-    font-size: var(--text-lg);
-    font-weight: var(--font-weight-medium);
-    line-height: 1.5;
+  html.light .glass-shell {
+    color: #0f172a;
   }
 
-  h4 {
-    font-size: var(--text-base);
-    font-weight: var(--font-weight-medium);
-    line-height: 1.5;
+  .glass-shell::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      radial-gradient(circle at 10% 10%, rgba(59, 130, 246, 0.18), transparent 20%),
+      radial-gradient(circle at 90% 20%, rgba(79, 70, 229, 0.14), transparent 18%),
+      radial-gradient(circle at 20% 90%, rgba(14, 165, 233, 0.14), transparent 16%);
+    opacity: 0.8;
   }
 
-  label {
-    font-size: var(--text-base);
-    font-weight: var(--font-weight-medium);
-    line-height: 1.5;
+  html.light .glass-shell::before {
+    display: none;
   }
 
-  button {
-    font-size: var(--text-base);
-    font-weight: var(--font-weight-medium);
-    line-height: 1.5;
+  .glass-shell > * {
+    position: relative;
+    z-index: 1;
   }
 
-  input {
-    font-size: var(--text-base);
-    font-weight: var(--font-weight-normal);
-    line-height: 1.5;
+  /* ================================================================
+     GLASS UTILITIES (Dark + Light)
+     ================================================================ */
+  .glass-panel {
+    background: rgba(15, 23, 42, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(24px);
+  }
+
+  html.light .glass-panel {
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    color: #0f172a;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  }
+
+  .glass-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(30px);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  }
+
+  html.light .glass-card {
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    color: #0f172a;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  }
+
+  .glass-soft {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  html.light .glass-soft {
+    background: rgba(0, 0, 0, 0.02);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+  }
+
+  .glass-strong {
+    background: rgba(15, 23, 42, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  html.light .glass-strong {
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    color: #0f172a;
+  }
+
+  .glass-shell a:hover {
+    color: #bfdbfe !important;
+  }
+
+  html.light .glass-shell a:hover {
+    color: #2563eb !important;
+  }
+
+  .glass-shell button {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .glass-shell button:hover {
+    transform: translateY(-1px);
+  }
+
+  /* ================================================================
+     BG-MAIN UTILITY
+     ================================================================ */
+  .bg-main {
+    @apply transition-colors duration-500;
+  }
+
+  html:not(.light) .bg-main, .dark .bg-main {
+    background-image:
+      radial-gradient(circle at 10% 10%, rgba(59, 130, 246, 0.18), transparent 18%),
+      radial-gradient(circle at 85% 15%, rgba(79, 70, 229, 0.16), transparent 20%),
+      radial-gradient(circle at 20% 95%, rgba(14, 165, 233, 0.1), transparent 20%),
+      linear-gradient(180deg, #040b1f 0%, #02040b 100%);
+    background-attachment: fixed;
+    background-size: cover;
+    color: #e2e8f0;
+  }
+
+  html.light .bg-main {
+    background-image:
+      radial-gradient(circle at 10% 10%, rgba(59, 130, 246, 0.05), transparent 20%),
+      radial-gradient(circle at 85% 15%, rgba(79, 70, 229, 0.05), transparent 25%),
+      linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+    background-attachment: fixed;
+    background-size: cover;
+    color: #0f172a;
+  }
+
+  /* ================================================================
+     GLOBAL LIGHT MODE OVERRIDES
+     These target semantic HTML elements inside light mode to ensure
+     text readability and consistent theming across the entire app.
+     ================================================================ */
+
+  /* --- Headings --- */
+  html.light h1,
+  html.light h2,
+  html.light h3,
+  html.light h4 {
+    color: #0f172a;
+  }
+
+  /* --- Nav bars --- */
+  html.light nav {
+    background: rgba(255, 255, 255, 0.85) !important;
+    border-color: rgba(0, 0, 0, 0.06) !important;
+    backdrop-filter: blur(24px);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  }
+
+  /* --- Labels --- */
+  html.light label {
+    color: #334155;
+  }
+
+  /* --- Inputs, textareas, selects --- */
+  html.light input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]),
+  html.light textarea,
+  html.light select {
+    background: rgba(255, 255, 255, 0.9) !important;
+    border-color: rgba(0, 0, 0, 0.12) !important;
+    color: #0f172a !important;
+  }
+
+  html.light input::placeholder,
+  html.light textarea::placeholder {
+    color: #94a3b8 !important;
+  }
+
+  html.light input:focus,
+  html.light textarea:focus,
+  html.light select:focus {
+    background: #ffffff !important;
+    border-color: #3b82f6 !important;
+  }
+
+  /* --- Select options --- */
+  html.light select option {
+    background: #ffffff;
+    color: #0f172a;
+  }
+
+  /* ================================================================
+     THEME-AWARE UTILITY CLASSES
+     Use these in components for automatic dark/light switching.
+     ================================================================ */
+
+  /* Cards & panels */
+  .theme-card {
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  html.light .theme-card {
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  }
+
+  .theme-nav {
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(24px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  html.light .theme-nav {
+    background: rgba(255, 255, 255, 0.85);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  }
+
+  .theme-input {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+  }
+  html.light .theme-input {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    color: #0f172a;
   }
 }

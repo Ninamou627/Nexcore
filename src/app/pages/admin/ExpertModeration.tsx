@@ -68,92 +68,99 @@ export function ExpertModeration() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-black text-white overflow-hidden relative">
+      <div className="fixed inset-0 -z-10 overflow-hidden">
+        <div className="absolute top-0 left-0 w-96 h-96 bg-blue-700/20 rounded-full mix-blend-screen blur-3xl animate-pulse" />
+        <div className="absolute top-24 right-0 w-96 h-96 bg-cyan-500/15 rounded-full mix-blend-screen blur-3xl animate-pulse" />
+        <div className="absolute bottom-0 left-1/3 w-96 h-96 bg-slate-900/40 rounded-full mix-blend-screen blur-3xl" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none" />
+      </div>
+
       <AdminNav />
 
-      <div className="max-w-7xl mx-auto px-6 py-8">
+      <div className="max-w-7xl mx-auto px-6 py-8 relative z-10">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-slate-900 mb-2">Modération des experts</h1>
-          <p className="text-slate-600">Validation et gestion des profils d'experts</p>
+          <h1 className="text-3xl font-bold text-white mb-2">Modération des experts</h1>
+          <p className="text-blue-100/80">Validation et gestion des profils d'experts</p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-4 mb-8">
+        <div className="grid md:grid-cols-3 gap-6 mb-8">
           <button
             onClick={() => setSelectedStatus('pending')}
-            className={`p-6 rounded-xl border-2 transition-all text-left ${
+            className={`p-6 rounded-3xl border transition-all text-left ${
               selectedStatus === 'pending'
-                ? 'border-orange-300 bg-orange-50'
-                : 'border-slate-200 bg-white hover:border-slate-300'
+                ? 'border-blue-400/40 bg-blue-500/10 text-white'
+                : 'border-white/10 bg-black/40 text-blue-100 hover:border-blue-300/30 hover:bg-white/5'
             }`}
           >
             <div className="flex items-center justify-between mb-2">
-              <div className="text-sm text-slate-600">En attente</div>
-              <Eye className="size-5 text-orange-600" />
+              <div className="text-sm text-blue-100/70">En attente</div>
+              <Eye className="size-5 text-orange-300" />
             </div>
-            <div className="text-3xl font-bold text-slate-900">{experts.pending.length}</div>
+            <div className="text-3xl font-bold text-white">{experts.pending.length}</div>
           </button>
 
           <button
             onClick={() => setSelectedStatus('approved')}
-            className={`p-6 rounded-xl border-2 transition-all text-left ${
+            className={`p-6 rounded-3xl border transition-all text-left ${
               selectedStatus === 'approved'
-                ? 'border-green-300 bg-green-50'
-                : 'border-slate-200 bg-white hover:border-slate-300'
+                ? 'border-green-400/30 bg-green-500/10 text-white'
+                : 'border-white/10 bg-black/40 text-blue-100 hover:border-green-300/30 hover:bg-white/5'
             }`}
           >
             <div className="flex items-center justify-between mb-2">
-              <div className="text-sm text-slate-600">Approuvés</div>
-              <CheckCircle className="size-5 text-green-600" />
+              <div className="text-sm text-blue-100/70">Approuvés</div>
+              <CheckCircle className="size-5 text-green-300" />
             </div>
-            <div className="text-3xl font-bold text-slate-900">{experts.approved.length}</div>
+            <div className="text-3xl font-bold text-white">{experts.approved.length}</div>
           </button>
 
           <button
             onClick={() => setSelectedStatus('rejected')}
-            className={`p-6 rounded-xl border-2 transition-all text-left ${
+            className={`p-6 rounded-3xl border transition-all text-left ${
               selectedStatus === 'rejected'
-                ? 'border-red-300 bg-red-50'
-                : 'border-slate-200 bg-white hover:border-slate-300'
+                ? 'border-red-400/30 bg-red-500/10 text-white'
+                : 'border-white/10 bg-black/40 text-blue-100 hover:border-red-300/30 hover:bg-white/5'
             }`}
           >
             <div className="flex items-center justify-between mb-2">
-              <div className="text-sm text-slate-600">Rejetés</div>
-              <XCircle className="size-5 text-red-600" />
+              <div className="text-sm text-blue-100/70">Rejetés</div>
+              <XCircle className="size-5 text-red-300" />
             </div>
-            <div className="text-3xl font-bold text-slate-900">{experts.rejected.length}</div>
+            <div className="text-3xl font-bold text-white">{experts.rejected.length}</div>
           </button>
         </div>
 
         <div className="space-y-4">
           {currentExperts.length === 0 ? (
-            <div className="bg-white rounded-xl p-12 border border-slate-200 text-center">
+            <div className="glass-card rounded-3xl p-12 border border-white/10 text-center bg-black/40">
               <div className="text-slate-400 mb-2">Aucun expert dans cette catégorie</div>
             </div>
           ) : (
             currentExperts.map((expert) => (
-              <div key={expert.id} className="bg-white rounded-xl p-6 border border-slate-200">
-                <div className="flex items-start gap-6">
-                  <div className="size-20 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center text-white text-2xl font-bold flex-shrink-0">
+              <div key={expert.id} className="glass-card rounded-3xl p-6 border border-white/10 bg-black/40 shadow-2xl shadow-blue-900/10">
+                <div className="flex flex-col lg:flex-row items-start gap-6">
+                  <div className="size-20 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-3xl flex items-center justify-center text-white text-2xl font-bold flex-shrink-0">
                     {expert.name.charAt(0)}
                   </div>
 
                   <div className="flex-1">
-                    <div className="flex items-start justify-between mb-4">
+                    <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-4">
                       <div>
-                        <h3 className="text-xl font-semibold text-slate-900 mb-1">{expert.name}</h3>
-                        <div className="flex items-center gap-4 text-sm text-slate-600 mb-2">
-                          <div className="flex items-center gap-1">
+                        <h3 className="text-xl font-semibold text-white mb-1">{expert.name}</h3>
+                        <div className="flex flex-wrap items-center gap-4 text-sm text-blue-100/70 mb-2">
+                          <div className="flex items-center gap-1 text-blue-100/70">
                             <MapPin className="size-4" />
                             {expert.location}
                           </div>
-                          <div className="flex items-center gap-1">
+                          <div className="flex items-center gap-1 text-blue-100/70">
                             <Calendar className="size-4" />
                             {expert.experience} d'expérience
                           </div>
-                          <div>{expert.email}</div>
+                          <div className="text-blue-100/70">{expert.email}</div>
                         </div>
                         {'rating' in expert && (
-                          <div className="flex items-center gap-2 text-sm">
+                          <div className="flex items-center gap-2 text-sm text-blue-100/70">
                             <div className="flex items-center gap-1">
                               <Star className="size-4 fill-yellow-400 text-yellow-400" />
                               <span className="font-medium">{expert.rating}</span>
@@ -162,12 +169,12 @@ export function ExpertModeration() {
                         )}
                       </div>
                       {'submittedAt' in expert && (
-                        <div className="text-right">
-                          <div className="text-sm text-slate-600">Soumis le</div>
-                          <div className="text-sm font-medium text-slate-900">
+                        <div className="text-right text-blue-100/70">
+                          <div className="text-sm">Soumis le</div>
+                          <div className="text-sm font-medium text-white">
                             {expert.submittedAt.toLocaleDateString('fr-FR')}
                           </div>
-                          <div className="text-xs text-slate-500">
+                          <div className="text-xs text-blue-200">
                             {expert.submittedAt.toLocaleTimeString('fr-FR', {
                               hour: '2-digit',
                               minute: '2-digit',
@@ -177,54 +184,54 @@ export function ExpertModeration() {
                       )}
                     </div>
 
-                    <p className="text-slate-700 mb-4">{expert.description}</p>
+                    <p className="text-blue-100/80 mb-4">{expert.description}</p>
 
                     <div className="mb-4">
-                      <div className="text-sm font-medium text-slate-700 mb-2">Compétences :</div>
+                      <div className="text-sm font-medium text-blue-100/70 mb-2">Compétences :</div>
                       <div className="flex flex-wrap gap-2">
                         {expert.skills.map((skill) => (
-                          <span key={skill} className="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-lg text-sm">
+                          <span key={skill} className="px-3 py-1 bg-blue-500/10 text-blue-200 rounded-full text-sm font-semibold border border-blue-400/20">
                             {skill}
                           </span>
                         ))}
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-4 mb-4">
-                      <div className="flex items-center gap-2 text-sm text-slate-600">
+                    <div className="flex flex-wrap items-center gap-4 mb-4 text-blue-100/70">
+                      <div className="flex items-center gap-2 text-sm">
                         <Award className="size-4" />
                         <span>{expert.portfolio} projets au portfolio</span>
                       </div>
-                      <button className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700">
+                      <button className="flex items-center gap-1 text-sm text-blue-200 hover:text-white transition-colors">
                         <ExternalLink className="size-4" />
                         Voir le profil complet
                       </button>
                     </div>
 
                     {selectedStatus === 'pending' && (
-                      <div className="flex items-center gap-3 pt-4 border-t border-slate-200">
+                      <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-white/10">
                         <button
                           onClick={() => handleApprove(expert.id)}
-                          className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg hover:shadow-lg transition-shadow"
+                          className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-2xl hover:shadow-lg transition-shadow"
                         >
                           <CheckCircle className="size-4" />
                           Approuver et activer
                         </button>
                         <button
                           onClick={() => handleReject(expert.id)}
-                          className="flex items-center gap-2 px-6 py-2 border-2 border-red-200 text-red-700 rounded-lg hover:border-red-300 transition-colors"
+                          className="flex items-center gap-2 px-6 py-2 border border-red-300 text-red-200 rounded-2xl hover:border-red-200 transition-colors"
                         >
                           <XCircle className="size-4" />
                           Rejeter
                         </button>
-                        <button className="px-6 py-2 border-2 border-slate-200 text-slate-700 rounded-lg hover:border-slate-300 transition-colors">
+                        <button className="px-6 py-2 border border-white/10 text-blue-100 rounded-2xl hover:border-blue-300 transition-colors">
                           Demander plus d'informations
                         </button>
                       </div>
                     )}
 
                     {selectedStatus === 'approved' && 'approvedAt' in expert && (
-                      <div className="bg-green-50 border border-green-200 rounded-lg p-3 text-sm text-green-700">
+                      <div className="glass-soft rounded-3xl p-4 border border-green-300/20 bg-green-500/10 text-green-100 text-sm">
                         Profil approuvé le {expert.approvedAt.toLocaleDateString('fr-FR')} - Statut: Actif
                       </div>
                     )}

@@ -72,102 +72,109 @@ export function ProjectModeration() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-black text-white overflow-hidden relative">
+      <div className="fixed inset-0 -z-10 overflow-hidden">
+        <div className="absolute top-0 left-0 w-96 h-96 bg-blue-700/20 rounded-full mix-blend-screen blur-3xl animate-pulse" />
+        <div className="absolute top-24 right-0 w-96 h-96 bg-cyan-500/15 rounded-full mix-blend-screen blur-3xl animate-pulse" />
+        <div className="absolute bottom-0 left-1/3 w-96 h-96 bg-slate-900/40 rounded-full mix-blend-screen blur-3xl" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none" />
+      </div>
+
       <AdminNav />
 
-      <div className="max-w-7xl mx-auto px-6 py-8">
+      <div className="max-w-7xl mx-auto px-6 py-8 relative z-10">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-slate-900 mb-2">Modération des projets</h1>
-          <p className="text-slate-600">Validation et surveillance des offres de projets</p>
+          <h1 className="text-3xl font-bold text-white mb-2">Modération des projets</h1>
+          <p className="text-blue-100/80">Validation et surveillance des offres de projets</p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-4 mb-8">
+        <div className="grid md:grid-cols-3 gap-6 mb-8">
           <button
             onClick={() => setSelectedStatus('pending')}
-            className={`p-6 rounded-xl border-2 transition-all text-left ${
+            className={`p-6 rounded-3xl border transition-all text-left ${
               selectedStatus === 'pending'
-                ? 'border-orange-300 bg-orange-50'
-                : 'border-slate-200 bg-white hover:border-slate-300'
+                ? 'border-blue-400/40 bg-blue-500/10 text-white'
+                : 'border-white/10 bg-black/40 text-blue-100 hover:border-blue-300/30 hover:bg-white/5'
             }`}
           >
             <div className="flex items-center justify-between mb-2">
-              <div className="text-sm text-slate-600">En attente</div>
-              <Eye className="size-5 text-orange-600" />
+              <div className="text-sm text-blue-100/70">En attente</div>
+              <Eye className="size-5 text-orange-300" />
             </div>
-            <div className="text-3xl font-bold text-slate-900">{projects.pending.length}</div>
+            <div className="text-3xl font-bold text-white">{projects.pending.length}</div>
           </button>
 
           <button
             onClick={() => setSelectedStatus('approved')}
-            className={`p-6 rounded-xl border-2 transition-all text-left ${
+            className={`p-6 rounded-3xl border transition-all text-left ${
               selectedStatus === 'approved'
-                ? 'border-green-300 bg-green-50'
-                : 'border-slate-200 bg-white hover:border-slate-300'
+                ? 'border-green-400/30 bg-green-500/10 text-white'
+                : 'border-white/10 bg-black/40 text-blue-100 hover:border-green-300/30 hover:bg-white/5'
             }`}
           >
             <div className="flex items-center justify-between mb-2">
-              <div className="text-sm text-slate-600">Approuvés</div>
-              <CheckCircle className="size-5 text-green-600" />
+              <div className="text-sm text-blue-100/70">Approuvés</div>
+              <CheckCircle className="size-5 text-green-300" />
             </div>
-            <div className="text-3xl font-bold text-slate-900">{projects.approved.length}</div>
+            <div className="text-3xl font-bold text-white">{projects.approved.length}</div>
           </button>
 
           <button
             onClick={() => setSelectedStatus('flagged')}
-            className={`p-6 rounded-xl border-2 transition-all text-left ${
+            className={`p-6 rounded-3xl border transition-all text-left ${
               selectedStatus === 'flagged'
-                ? 'border-amber-300 bg-amber-50'
-                : 'border-slate-200 bg-white hover:border-slate-300'
+                ? 'border-amber-400/30 bg-amber-500/10 text-white'
+                : 'border-white/10 bg-black/40 text-blue-100 hover:border-amber-300/30 hover:bg-white/5'
             }`}
           >
             <div className="flex items-center justify-between mb-2">
-              <div className="text-sm text-slate-600">Signalés</div>
-              <AlertCircle className="size-5 text-amber-600" />
+              <div className="text-sm text-blue-100/70">Signalés</div>
+              <AlertCircle className="size-5 text-amber-300" />
             </div>
-            <div className="text-3xl font-bold text-slate-900">{projects.flagged.length}</div>
+            <div className="text-3xl font-bold text-white">{projects.flagged.length}</div>
           </button>
         </div>
 
         <div className="space-y-4">
           {currentProjects.length === 0 ? (
-            <div className="bg-white rounded-xl p-12 border border-slate-200 text-center">
+            <div className="glass-card rounded-3xl p-12 border border-white/10 text-center bg-black/40">
               <div className="text-slate-400 mb-2">Aucun projet dans cette catégorie</div>
             </div>
           ) : (
             currentProjects.map((project) => (
-              <div key={project.id} className="bg-white rounded-xl p-6 border border-slate-200">
-                <div className="flex items-start justify-between mb-4">
+              <div key={project.id} className="glass-card rounded-3xl p-6 border border-white/10 bg-black/40 shadow-2xl shadow-blue-900/10">
+                <div className="flex flex-col lg:flex-row items-start justify-between gap-6 mb-6">
                   <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
-                      <h3 className="text-xl font-semibold text-slate-900">{project.title}</h3>
-                      <span className="px-3 py-1 bg-slate-100 text-slate-700 rounded-full text-sm">
+                    <div className="flex flex-wrap items-center gap-3 mb-4">
+                      <h3 className="text-xl font-semibold text-white">{project.title}</h3>
+                      <span className="px-3 py-1 bg-blue-500/10 text-blue-200 rounded-full text-sm font-semibold border border-blue-400/20">
                         {project.category}
                       </span>
                       {'visibility' in project && (
-                        <span className={`px-3 py-1 rounded-full text-sm ${
+                        <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
                           project.visibility === 'public'
-                            ? 'bg-blue-100 text-blue-700'
-                            : 'bg-purple-100 text-purple-700'
+                            ? 'bg-blue-500/10 text-blue-200 border border-blue-400/20'
+                            : 'bg-purple-500/10 text-purple-200 border border-purple-400/20'
                         }`}>
                           {project.visibility === 'public' ? 'Public' : 'Privé'}
                         </span>
                       )}
                     </div>
-                    <div className="text-sm text-slate-600 mb-4">
+                    <div className="text-sm text-blue-100/70 mb-4">
                       Client: {project.client}
                     </div>
 
                     {'description' in project && (
-                      <p className="text-slate-700 mb-4">{project.description}</p>
+                      <p className="text-blue-100/80 mb-4">{project.description}</p>
                     )}
 
-                    <div className="flex items-center gap-6 text-sm text-slate-600">
+                    <div className="flex flex-wrap items-center gap-6 text-sm text-blue-100/70">
                       <div className="flex items-center gap-2">
-                        <DollarSign className="size-4" />
+                        <DollarSign className="size-4 text-blue-300" />
                         <span className="font-medium">{project.budget}</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Calendar className="size-4" />
+                        <Calendar className="size-4 text-blue-300" />
                         <span>Délai: {project.deadline}</span>
                       </div>
                       {'proposals' in project && (
@@ -176,8 +183,8 @@ export function ProjectModeration() {
                     </div>
 
                     {'flagReason' in project && (
-                      <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
-                        <div className="flex items-center gap-2 text-amber-700">
+                      <div className="mt-4 p-4 glass-soft rounded-3xl border border-amber-300/20 bg-amber-500/10 text-amber-100">
+                        <div className="flex items-center gap-2 text-amber-200">
                           <AlertCircle className="size-4" />
                           <span className="text-sm font-medium">{project.flagReason}</span>
                         </div>
@@ -186,12 +193,12 @@ export function ProjectModeration() {
                   </div>
 
                   {'submittedAt' in project && (
-                    <div className="text-right ml-6">
-                      <div className="text-sm text-slate-600">Soumis le</div>
-                      <div className="text-sm font-medium text-slate-900">
+                    <div className="text-right ml-6 text-blue-100/80">
+                      <div className="text-sm">Soumis le</div>
+                      <div className="text-sm font-medium text-white">
                         {project.submittedAt.toLocaleDateString('fr-FR')}
                       </div>
-                      <div className="text-xs text-slate-500">
+                      <div className="text-xs text-blue-200">
                         {project.submittedAt.toLocaleTimeString('fr-FR', {
                           hour: '2-digit',
                           minute: '2-digit',
@@ -202,24 +209,24 @@ export function ProjectModeration() {
                 </div>
 
                 {selectedStatus === 'pending' && (
-                  <div className="flex items-center gap-3 pt-4 border-t border-slate-200">
+                  <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-white/10">
                     <button
                       onClick={() => handleApprove(project.id)}
-                      className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg hover:shadow-lg transition-shadow"
+                      className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-2xl hover:shadow-lg transition-shadow"
                     >
                       <CheckCircle className="size-4" />
                       Approuver et publier
                     </button>
                     <button
                       onClick={() => handleFlag(project.id)}
-                      className="flex items-center gap-2 px-6 py-2 border-2 border-amber-200 text-amber-700 rounded-lg hover:border-amber-300 transition-colors"
+                      className="flex items-center gap-2 px-6 py-2 border border-amber-300 text-amber-200 rounded-2xl hover:border-amber-200 transition-colors"
                     >
                       <AlertCircle className="size-4" />
                       Signaler pour vérification
                     </button>
                     <button
                       onClick={() => handleReject(project.id)}
-                      className="flex items-center gap-2 px-6 py-2 border-2 border-red-200 text-red-700 rounded-lg hover:border-red-300 transition-colors"
+                      className="flex items-center gap-2 px-6 py-2 border border-red-300 text-red-200 rounded-2xl hover:border-red-200 transition-colors"
                     >
                       <XCircle className="size-4" />
                       Rejeter
@@ -228,28 +235,28 @@ export function ProjectModeration() {
                 )}
 
                 {selectedStatus === 'approved' && 'approvedAt' in project && (
-                  <div className="mt-4 bg-green-50 border border-green-200 rounded-lg p-3 text-sm text-green-700">
+                  <div className="mt-4 glass-soft rounded-3xl p-4 border border-green-300/20 bg-green-500/10 text-green-100 text-sm">
                     Projet approuvé le {project.approvedAt.toLocaleDateString('fr-FR')} - Statut: Publié
                   </div>
                 )}
 
                 {selectedStatus === 'flagged' && (
-                  <div className="flex items-center gap-3 pt-4 border-t border-slate-200">
+                  <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-white/10">
                     <button
                       onClick={() => handleApprove(project.id)}
-                      className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg hover:shadow-lg transition-shadow"
+                      className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-2xl hover:shadow-lg transition-shadow"
                     >
                       <CheckCircle className="size-4" />
                       Approuver après vérification
                     </button>
                     <button
                       onClick={() => handleReject(project.id)}
-                      className="flex items-center gap-2 px-6 py-2 border-2 border-red-200 text-red-700 rounded-lg hover:border-red-300 transition-colors"
+                      className="flex items-center gap-2 px-6 py-2 border border-red-300 text-red-200 rounded-2xl hover:border-red-200 transition-colors"
                     >
                       <XCircle className="size-4" />
                       Rejeter définitivement
                     </button>
-                    <button className="px-6 py-2 border-2 border-slate-200 text-slate-700 rounded-lg hover:border-slate-300 transition-colors">
+                    <button className="px-6 py-2 border border-white/10 text-blue-100 rounded-2xl hover:border-blue-300 transition-colors">
                       Contacter le client
                     </button>
                   </div>
@@ -259,23 +266,23 @@ export function ProjectModeration() {
           )}
         </div>
 
-        <div className="mt-6 bg-blue-50 rounded-xl p-6 border border-blue-200">
-          <h3 className="font-semibold text-slate-900 mb-2">Critères de modération</h3>
-          <ul className="text-sm text-slate-700 space-y-2">
+        <div className="mt-6 glass-card rounded-3xl p-6 border border-white/10 bg-black/40">
+          <h3 className="font-semibold text-white mb-4">Critères de modération</h3>
+          <ul className="text-sm text-blue-100/80 space-y-3">
             <li className="flex items-start gap-2">
-              <span className="text-blue-600 mt-0.5">•</span>
+              <span className="text-blue-300 mt-0.5">•</span>
               <span>Vérifier que le budget et les délais sont réalistes</span>
             </li>
             <li className="flex items-start gap-2">
-              <span className="text-blue-600 mt-0.5">•</span>
+              <span className="text-blue-300 mt-0.5">•</span>
               <span>S'assurer que la description est claire et complète</span>
             </li>
             <li className="flex items-start gap-2">
-              <span className="text-blue-600 mt-0.5">•</span>
+              <span className="text-blue-300 mt-0.5">•</span>
               <span>Signaler les projets dans des secteurs réglementés (finance, santé, etc.)</span>
             </li>
             <li className="flex items-start gap-2">
-              <span className="text-blue-600 mt-0.5">•</span>
+              <span className="text-blue-300 mt-0.5">•</span>
               <span>Rejeter tout contenu illégal, discriminatoire ou contraire aux CGU</span>
             </li>
           </ul>
