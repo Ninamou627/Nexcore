@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
-import { X, Send, Sparkles, CheckCircle, ArrowRight, Users, MessageCircle } from 'lucide-react';
+import { X, Send, Sparkles, CheckCircle, ArrowRight, Users, MessageCircle, Mic, MicOff } from 'lucide-react';
 import { useTheme } from '../core/contexts/ThemeContext';
 import { api } from '../core/services/api';
 
@@ -17,6 +17,7 @@ export function AIAssistant({ context = 'client', projectId }: AIAssistantProps)
   ]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
 
   const handleAction = (action: ActionResult) => {
     switch (action.tool) {
@@ -68,6 +69,34 @@ export function AIAssistant({ context = 'client', projectId }: AIAssistantProps)
       console.error(err);
       setMessages((prev) => [...prev, { id: (Date.now() + 1).toString(), role: 'assistant', content: "Désolé, je rencontre une difficulté technique. Veuillez réessayer.", timestamp: new Date() }]);
     } finally { setIsLoading(false); }
+  };
+
+  const toggleRecording = () => {
+    if (isRecording) {
+      setIsRecording(false);
+      return;
+    }
+
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert("La reconnaissance vocale n'est pas supportée par votre navigateur.");
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'fr-FR';
+    recognition.continuous = false;
+    recognition.interimResults = false;
+
+    recognition.onstart = () => setIsRecording(true);
+    recognition.onend = () => setIsRecording(false);
+    recognition.onerror = () => setIsRecording(false);
+    recognition.onresult = (event: any) => {
+      const transcript = event.results[0][0].transcript;
+      setInputValue(prev => prev + (prev ? ' ' : '') + transcript);
+    };
+
+    recognition.start();
   };
 
   const isLight = theme === 'light';
@@ -144,6 +173,10 @@ export function AIAssistant({ context = 'client', projectId }: AIAssistantProps)
               <input type="text" value={inputValue} onChange={(e) => setInputValue(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                 placeholder="Demandez-moi d'agir..." disabled={isLoading}
                 className={`flex-1 px-5 py-3 rounded-2xl focus:ring-2 focus:ring-blue-500/50 focus:border-transparent outline-none text-sm disabled:opacity-50 transition-all ${isLight ? 'bg-white border border-slate-200 text-slate-900 placeholder-slate-400' : 'bg-white/5 border border-white/10 text-white placeholder-blue-100/30'}`} />
+              <button onClick={toggleRecording}
+                className={`size-12 rounded-2xl flex items-center justify-center transition-all border border-white/10 shadow-lg ${isRecording ? 'bg-red-500/20 text-red-400 border-red-500/40' : 'bg-white/5 text-blue-100/70 hover:bg-white/10'}`}>
+                {isRecording ? <MicOff className="size-5 animate-pulse" /> : <Mic className="size-5" />}
+              </button>
               <button onClick={handleSendMessage} disabled={isLoading || !inputValue.trim()}
                 className="size-12 bg-gradient-to-br from-blue-600/90 to-cyan-500/40 text-white rounded-2xl hover:shadow-xl transition-all flex items-center justify-center disabled:opacity-50 border border-white/10 shadow-lg">
                 <Send className="size-5" />
