@@ -1,75 +1,55 @@
 import { AdminNav } from '../../components/AdminNav';
-import { CheckCircle, XCircle, Eye, DollarSign, Calendar, AlertCircle } from 'lucide-react';
-import { useState } from 'react';
+import { CheckCircle, Eye, DollarSign, Calendar, Loader2, Briefcase } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { api } from '../../core/services/api';
+
+interface Project {
+  id: string;
+  title: string;
+  description?: string;
+  budget?: string;
+  timeline?: string;
+  techStack?: string[];
+  status: string;
+  createdAt: string;
+  client?: { fullName: string; company?: string };
+  expert?: { fullName: string } | null;
+}
 
 export function ProjectModeration() {
-  const [selectedStatus, setSelectedStatus] = useState<'pending' | 'approved' | 'flagged'>('pending');
+  const [selectedStatus, setSelectedStatus] = useState<'matching' | 'in_progress' | 'completed'>('matching');
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const projects = {
-    pending: [
-      {
-        id: '1',
-        title: 'Plateforme de réservation en ligne',
-        client: 'Hôtel Prestige International',
-        category: 'Web',
-        budget: '20 000 - 25 000 €',
-        deadline: '3 mois',
-        description: 'Développement d\'une plateforme de réservation en ligne intégrée avec système de paiement, gestion des chambres, calendrier de disponibilité et interface d\'administration.',
-        submittedAt: new Date('2026-05-04T09:30:00'),
-        visibility: 'public',
-      },
-      {
-        id: '2',
-        title: 'Application mobile de suivi médical',
-        client: 'Clinique Santé Plus',
-        category: 'Mobile',
-        budget: '30 000 €',
-        deadline: '4 mois',
-        description: 'Application mobile iOS et Android pour le suivi des patients, rendez-vous médicaux, prescriptions et téléconsultation.',
-        submittedAt: new Date('2026-05-03T14:15:00'),
-        visibility: 'private',
-      },
-    ],
-    approved: [
-      {
-        id: '3',
-        title: 'Site E-commerce Artisanat',
-        client: 'Artisanat Traditionnel SARL',
-        category: 'E-commerce',
-        budget: '15 000 - 20 000 €',
-        deadline: '10-12 semaines',
-        approvedAt: new Date('2026-04-15T10:00:00'),
-        proposals: 8,
-      },
-    ],
-    flagged: [
-      {
-        id: '4',
-        title: 'Site web pour crypto-monnaie',
-        client: 'CryptoInvest Pro',
-        category: 'Web',
-        budget: '50 000 €',
-        deadline: '2 mois',
-        description: 'Plateforme d\'échange de crypto-monnaies avec wallet intégré.',
-        submittedAt: new Date('2026-05-01T16:00:00'),
-        flagReason: 'Vérification requise - Secteur réglementé',
-      },
-    ],
-  };
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const data = await api.get('/admin/projects');
+        setProjects(data);
+      } catch (error) {
+        console.error('Erreur chargement projets:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProjects();
+  }, []);
 
-  const currentProjects = projects[selectedStatus];
+  const matchingProjects = projects.filter(p => p.status === 'matching');
+  const inProgressProjects = projects.filter(p => p.status === 'in_progress');
+  const completedProjects = projects.filter(p => p.status === 'completed');
 
-  const handleApprove = (projectId: string) => {
-    console.log('Approving project:', projectId);
-  };
+  const currentProjects = selectedStatus === 'matching' ? matchingProjects
+    : selectedStatus === 'in_progress' ? inProgressProjects
+    : completedProjects;
 
-  const handleReject = (projectId: string) => {
-    console.log('Rejecting project:', projectId);
-  };
-
-  const handleFlag = (projectId: string) => {
-    console.log('Flagging project:', projectId);
-  };
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-black flex items-center justify-center">
+        <Loader2 className="w-10 h-10 text-blue-400 animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-black text-white overflow-hidden relative">
@@ -85,207 +65,150 @@ export function ProjectModeration() {
       <div className="max-w-7xl mx-auto px-6 py-8 relative z-10">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-white mb-2">Modération des projets</h1>
-          <p className="text-blue-100/80">Validation et surveillance des offres de projets</p>
+          <p className="text-blue-100/80">Suivi et surveillance de tous les projets de la plateforme</p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-6 mb-8">
           <button
-            onClick={() => setSelectedStatus('pending')}
+            onClick={() => setSelectedStatus('matching')}
             className={`p-6 rounded-3xl border transition-all text-left ${
-              selectedStatus === 'pending'
-                ? 'border-blue-400/40 bg-blue-500/10 text-white'
+              selectedStatus === 'matching'
+                ? 'border-orange-400/40 bg-orange-500/10 text-white'
+                : 'border-white/10 bg-black/40 text-blue-100 hover:border-orange-300/30 hover:bg-white/5'
+            }`}
+          >
+            <div className="flex items-center justify-between mb-2">
+              <div className="text-sm text-blue-100/70">En matching</div>
+              <Eye className="size-5 text-orange-300" />
+            </div>
+            <div className="text-3xl font-bold text-white">{matchingProjects.length}</div>
+          </button>
+
+          <button
+            onClick={() => setSelectedStatus('in_progress')}
+            className={`p-6 rounded-3xl border transition-all text-left ${
+              selectedStatus === 'in_progress'
+                ? 'border-blue-400/30 bg-blue-500/10 text-white'
                 : 'border-white/10 bg-black/40 text-blue-100 hover:border-blue-300/30 hover:bg-white/5'
             }`}
           >
             <div className="flex items-center justify-between mb-2">
-              <div className="text-sm text-blue-100/70">En attente</div>
-              <Eye className="size-5 text-orange-300" />
+              <div className="text-sm text-blue-100/70">En cours</div>
+              <Briefcase className="size-5 text-blue-300" />
             </div>
-            <div className="text-3xl font-bold text-white">{projects.pending.length}</div>
+            <div className="text-3xl font-bold text-white">{inProgressProjects.length}</div>
           </button>
 
           <button
-            onClick={() => setSelectedStatus('approved')}
+            onClick={() => setSelectedStatus('completed')}
             className={`p-6 rounded-3xl border transition-all text-left ${
-              selectedStatus === 'approved'
+              selectedStatus === 'completed'
                 ? 'border-green-400/30 bg-green-500/10 text-white'
                 : 'border-white/10 bg-black/40 text-blue-100 hover:border-green-300/30 hover:bg-white/5'
             }`}
           >
             <div className="flex items-center justify-between mb-2">
-              <div className="text-sm text-blue-100/70">Approuvés</div>
+              <div className="text-sm text-blue-100/70">Terminés</div>
               <CheckCircle className="size-5 text-green-300" />
             </div>
-            <div className="text-3xl font-bold text-white">{projects.approved.length}</div>
-          </button>
-
-          <button
-            onClick={() => setSelectedStatus('flagged')}
-            className={`p-6 rounded-3xl border transition-all text-left ${
-              selectedStatus === 'flagged'
-                ? 'border-amber-400/30 bg-amber-500/10 text-white'
-                : 'border-white/10 bg-black/40 text-blue-100 hover:border-amber-300/30 hover:bg-white/5'
-            }`}
-          >
-            <div className="flex items-center justify-between mb-2">
-              <div className="text-sm text-blue-100/70">Signalés</div>
-              <AlertCircle className="size-5 text-amber-300" />
-            </div>
-            <div className="text-3xl font-bold text-white">{projects.flagged.length}</div>
+            <div className="text-3xl font-bold text-white">{completedProjects.length}</div>
           </button>
         </div>
 
         <div className="space-y-4">
           {currentProjects.length === 0 ? (
             <div className="glass-card rounded-3xl p-12 border border-white/10 text-center bg-black/40">
-              <div className="text-slate-400 mb-2">Aucun projet dans cette catégorie</div>
+              <Briefcase className="size-12 text-blue-100/30 mx-auto mb-4" />
+              <div className="text-white text-lg font-semibold mb-2">Aucun projet dans cette catégorie</div>
+              <div className="text-blue-100/50">Les projets apparaîtront ici une fois créés par les clients.</div>
             </div>
           ) : (
             currentProjects.map((project) => (
               <div key={project.id} className="glass-card rounded-3xl p-6 border border-white/10 bg-black/40 shadow-2xl shadow-blue-900/10">
-                <div className="flex flex-col lg:flex-row items-start justify-between gap-6 mb-6">
+                <div className="flex flex-col lg:flex-row items-start justify-between gap-6 mb-4">
                   <div className="flex-1">
                     <div className="flex flex-wrap items-center gap-3 mb-4">
                       <h3 className="text-xl font-semibold text-white">{project.title}</h3>
-                      <span className="px-3 py-1 bg-blue-500/10 text-blue-200 rounded-full text-sm font-semibold border border-blue-400/20">
-                        {project.category}
+                      <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                        project.status === 'matching' ? 'bg-orange-500/10 text-orange-200 border border-orange-400/20' :
+                        project.status === 'in_progress' ? 'bg-blue-500/10 text-blue-200 border border-blue-400/20' :
+                        'bg-green-500/10 text-green-200 border border-green-400/20'
+                      }`}>
+                        {project.status === 'matching' ? 'En matching' : project.status === 'in_progress' ? 'En cours' : 'Terminé'}
                       </span>
-                      {'visibility' in project && (
-                        <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                          project.visibility === 'public'
-                            ? 'bg-blue-500/10 text-blue-200 border border-blue-400/20'
-                            : 'bg-purple-500/10 text-purple-200 border border-purple-400/20'
-                        }`}>
-                          {project.visibility === 'public' ? 'Public' : 'Privé'}
-                        </span>
-                      )}
                     </div>
                     <div className="text-sm text-blue-100/70 mb-4">
-                      Client: {project.client}
-                    </div>
-
-                    {'description' in project && (
-                      <p className="text-blue-100/80 mb-4">{project.description}</p>
-                    )}
-
-                    <div className="flex flex-wrap items-center gap-6 text-sm text-blue-100/70">
-                      <div className="flex items-center gap-2">
-                        <DollarSign className="size-4 text-blue-300" />
-                        <span className="font-medium">{project.budget}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Calendar className="size-4 text-blue-300" />
-                        <span>Délai: {project.deadline}</span>
-                      </div>
-                      {'proposals' in project && (
-                        <div>{project.proposals} propositions reçues</div>
+                      Client: <span className="text-white font-medium">{project.client?.fullName || 'N/A'}</span>
+                      {project.client?.company && <span className="text-blue-100/50"> ({project.client.company})</span>}
+                      {project.expert && (
+                        <span> • Expert: <span className="text-white font-medium">{project.expert.fullName}</span></span>
                       )}
                     </div>
 
-                    {'flagReason' in project && (
-                      <div className="mt-4 p-4 glass-soft rounded-3xl border border-amber-300/20 bg-amber-500/10 text-amber-100">
-                        <div className="flex items-center gap-2 text-amber-200">
-                          <AlertCircle className="size-4" />
-                          <span className="text-sm font-medium">{project.flagReason}</span>
+                    {project.description && (
+                      <p className="text-blue-100/80 mb-4 line-clamp-3">{project.description}</p>
+                    )}
+
+                    <div className="flex flex-wrap items-center gap-6 text-sm text-blue-100/70 mb-4">
+                      {project.budget && (
+                        <div className="flex items-center gap-2">
+                          <DollarSign className="size-4 text-blue-300" />
+                          <span className="font-medium">{project.budget}</span>
                         </div>
+                      )}
+                      {project.timeline && (
+                        <div className="flex items-center gap-2">
+                          <Calendar className="size-4 text-blue-300" />
+                          <span>Délai: {project.timeline}</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {project.techStack && project.techStack.length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {project.techStack.map((tech) => (
+                          <span key={tech} className="px-3 py-1 bg-blue-500/10 text-blue-200 rounded-full text-sm font-semibold border border-blue-400/20">
+                            {tech}
+                          </span>
+                        ))}
                       </div>
                     )}
                   </div>
 
-                  {'submittedAt' in project && (
-                    <div className="text-right ml-6 text-blue-100/80">
-                      <div className="text-sm">Soumis le</div>
-                      <div className="text-sm font-medium text-white">
-                        {project.submittedAt.toLocaleDateString('fr-FR')}
-                      </div>
-                      <div className="text-xs text-blue-200">
-                        {project.submittedAt.toLocaleTimeString('fr-FR', {
-                          hour: '2-digit',
-                          minute: '2-digit',
-                        })}
-                      </div>
+                  <div className="text-right ml-6 text-blue-100/80">
+                    <div className="text-sm">Créé le</div>
+                    <div className="text-sm font-medium text-white">
+                      {new Date(project.createdAt).toLocaleDateString('fr-FR')}
                     </div>
-                  )}
+                    <div className="text-xs text-blue-200">
+                      {new Date(project.createdAt).toLocaleTimeString('fr-FR', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })}
+                    </div>
+                  </div>
                 </div>
-
-                {selectedStatus === 'pending' && (
-                  <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-white/10">
-                    <button
-                      onClick={() => handleApprove(project.id)}
-                      className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-2xl hover:shadow-lg transition-shadow"
-                    >
-                      <CheckCircle className="size-4" />
-                      Approuver et publier
-                    </button>
-                    <button
-                      onClick={() => handleFlag(project.id)}
-                      className="flex items-center gap-2 px-6 py-2 border border-amber-300 text-amber-200 rounded-2xl hover:border-amber-200 transition-colors"
-                    >
-                      <AlertCircle className="size-4" />
-                      Signaler pour vérification
-                    </button>
-                    <button
-                      onClick={() => handleReject(project.id)}
-                      className="flex items-center gap-2 px-6 py-2 border border-red-300 text-red-200 rounded-2xl hover:border-red-200 transition-colors"
-                    >
-                      <XCircle className="size-4" />
-                      Rejeter
-                    </button>
-                  </div>
-                )}
-
-                {selectedStatus === 'approved' && 'approvedAt' in project && (
-                  <div className="mt-4 glass-soft rounded-3xl p-4 border border-green-300/20 bg-green-500/10 text-green-100 text-sm">
-                    Projet approuvé le {project.approvedAt.toLocaleDateString('fr-FR')} - Statut: Publié
-                  </div>
-                )}
-
-                {selectedStatus === 'flagged' && (
-                  <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-white/10">
-                    <button
-                      onClick={() => handleApprove(project.id)}
-                      className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-2xl hover:shadow-lg transition-shadow"
-                    >
-                      <CheckCircle className="size-4" />
-                      Approuver après vérification
-                    </button>
-                    <button
-                      onClick={() => handleReject(project.id)}
-                      className="flex items-center gap-2 px-6 py-2 border border-red-300 text-red-200 rounded-2xl hover:border-red-200 transition-colors"
-                    >
-                      <XCircle className="size-4" />
-                      Rejeter définitivement
-                    </button>
-                    <button className="px-6 py-2 border border-white/10 text-blue-100 rounded-2xl hover:border-blue-300 transition-colors">
-                      Contacter le client
-                    </button>
-                  </div>
-                )}
               </div>
             ))
           )}
         </div>
 
         <div className="mt-6 glass-card rounded-3xl p-6 border border-white/10 bg-black/40">
-          <h3 className="font-semibold text-white mb-4">Critères de modération</h3>
-          <ul className="text-sm text-blue-100/80 space-y-3">
-            <li className="flex items-start gap-2">
-              <span className="text-blue-300 mt-0.5">•</span>
-              <span>Vérifier que le budget et les délais sont réalistes</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-blue-300 mt-0.5">•</span>
-              <span>S'assurer que la description est claire et complète</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-blue-300 mt-0.5">•</span>
-              <span>Signaler les projets dans des secteurs réglementés (finance, santé, etc.)</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-blue-300 mt-0.5">•</span>
-              <span>Rejeter tout contenu illégal, discriminatoire ou contraire aux CGU</span>
-            </li>
-          </ul>
+          <h3 className="font-semibold text-white mb-4">Résumé</h3>
+          <div className="grid grid-cols-3 gap-4 text-center">
+            <div>
+              <div className="text-2xl font-bold text-orange-300">{matchingProjects.length}</div>
+              <div className="text-sm text-blue-100/60">En matching</div>
+            </div>
+            <div>
+              <div className="text-2xl font-bold text-blue-300">{inProgressProjects.length}</div>
+              <div className="text-sm text-blue-100/60">En cours</div>
+            </div>
+            <div>
+              <div className="text-2xl font-bold text-green-300">{completedProjects.length}</div>
+              <div className="text-sm text-blue-100/60">Terminés</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router';
-import { Rocket, Search, Star, TrendingUp, Briefcase, Award, LogOut, Bell } from 'lucide-react';
+import { Rocket, Search, Star, TrendingUp, Briefcase, Award, LogOut, Bell, CheckCircle } from 'lucide-react';
 import { AIAssistant } from '../../components/AIAssistant';
 import { api } from '../../core/services/api';
 import { useAuth } from '../../core/stores/auth';
@@ -10,7 +10,8 @@ export function ExpertDashboard() {
   const { user, token, logout } = useAuth();
   const navigate = useNavigate();
   const [opportunities, setOpportunities] = useState([]);
-  const [activeProjects, setActiveProjects] = useState([]);
+  const [activeProjects, setActiveProjects] = useState<any[]>([]);
+  const [allProjects, setAllProjects] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -19,6 +20,7 @@ export function ExpertDashboard() {
         const opps = await api.get('/marketplace', token || undefined);
         setOpportunities(opps);
         const projs = await api.get('/projects', token || undefined);
+        setAllProjects(projs);
         setActiveProjects(projs.filter((p: any) => p.status === 'in_progress'));
       } catch (err) { console.error(err); } finally { setIsLoading(false); }
     };
@@ -26,6 +28,10 @@ export function ExpertDashboard() {
   }, [token]);
 
   const handleLogout = () => { logout(); navigate('/login'); };
+
+  // Calculer les stats réelles
+  const completedProjects = allProjects.filter((p: any) => p.status === 'completed');
+  const totalProposals = allProjects.reduce((acc: number, p: any) => acc + (p._count?.proposals || 0), 0);
 
   return (
     <div className="min-h-screen bg-main overflow-hidden relative">
@@ -55,7 +61,9 @@ export function ExpertDashboard() {
             <ThemeToggle />
             <button className="relative w-10 h-10 bg-black/20 light:bg-slate-100 rounded-lg hover:bg-black/30 light:hover:bg-slate-200 transition-colors flex items-center justify-center border border-white/10 light:border-slate-200">
               <Bell className="w-5 h-5 text-blue-100/70 light:text-slate-600" />
-              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+              {opportunities.length > 0 && (
+                <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+              )}
             </button>
             <div className="text-right">
               <div className="text-sm font-medium text-white light:text-slate-900">{user?.fullName || 'Expert IT'}</div>
@@ -78,8 +86,8 @@ export function ExpertDashboard() {
           {[
             { label: 'Projets actifs', value: activeProjects.length, icon: Briefcase, color: 'blue' },
             { label: 'Opportunités', value: opportunities.length, icon: TrendingUp, color: 'cyan' },
-            { label: 'Note moyenne', value: '4.8', icon: Star, color: 'yellow' },
-            { label: 'Projets complétés', value: '47', icon: Award, color: 'green' },
+            { label: 'Projets complétés', value: completedProjects.length, icon: CheckCircle, color: 'green' },
+            { label: 'Total projets', value: allProjects.length, icon: Award, color: 'purple' },
           ].map((item, i) => (
             <div key={i} className="bg-black/40 light:bg-white/80 rounded-xl p-6 border border-white/10 light:border-slate-200 shadow-2xl light:shadow-sm backdrop-blur-3xl">
               <div className="flex items-center justify-between mb-2">
@@ -162,18 +170,9 @@ export function ExpertDashboard() {
                       </div>
                       <Link to={`/workspace/${project.id}`} className="px-4 py-2 text-blue-200 light:text-blue-600 hover:text-blue-100 border-2 border-blue-400/30 rounded-lg hover:border-blue-400/50 transition-colors font-bold text-sm">Accéder à l'espace</Link>
                     </div>
-                    <div className="mb-3">
-                      <div className="flex items-center justify-between text-sm mb-1">
-                        <span className="text-blue-100/70 light:text-slate-500">Progression</span>
-                        <span className="font-semibold text-white light:text-slate-900">{project.progress || 0}%</span>
-                      </div>
-                      <div className="w-full h-2 bg-black/20 light:bg-slate-200 rounded-full overflow-hidden border border-white/10 light:border-slate-300">
-                        <div className="h-full bg-gradient-to-r from-blue-600/90 to-cyan-400/40 rounded-full transition-all" style={{ width: `${project.progress || 0}%` }} />
-                      </div>
-                    </div>
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-blue-100/70 light:text-slate-500">Statut: <span className="text-blue-200 light:text-blue-600 font-bold uppercase text-xs">{project.status}</span></span>
-                      <span className="text-blue-100/50 light:text-slate-400">Créé le: {new Date(project.createdAt).toLocaleDateString()}</span>
+                      <span className="text-blue-100/70 light:text-slate-500">Statut: <span className="text-blue-200 light:text-blue-600 font-bold uppercase text-xs">{project.status === 'in_progress' ? 'En cours' : project.status}</span></span>
+                      <span className="text-blue-100/50 light:text-slate-400">Créé le: {new Date(project.createdAt).toLocaleDateString('fr-FR')}</span>
                     </div>
                   </div>
                 ))}
@@ -182,19 +181,29 @@ export function ExpertDashboard() {
           </div>
 
           <div className="space-y-4">
-            <div className="bg-gradient-to-br from-blue-600/90 to-cyan-400/40 text-white rounded-xl p-6 border border-white/10 backdrop-blur-3xl">
-              <Award className="w-8 h-8 mb-3" />
-              <h3 className="text-xl font-semibold mb-2">Profil Vérifié</h3>
-              <p className="text-sm text-blue-100 mb-4">Votre profil est vérifié et validé par Nexcore. Vous avez 2× plus de chances d'être sélectionné.</p>
+            <div className={`rounded-xl p-6 border backdrop-blur-3xl ${user?.isVerified !== false ? 'bg-gradient-to-br from-blue-600/90 to-cyan-400/40 text-white border-white/10' : 'bg-orange-500/10 text-orange-200 border-orange-400/30'}`}>
+              {user?.isVerified !== false ? (
+                <>
+                  <Award className="w-8 h-8 mb-3" />
+                  <h3 className="text-xl font-semibold mb-2">Profil Vérifié</h3>
+                  <p className="text-sm text-blue-100 mb-4">Votre profil est vérifié et validé par Nexcore. Vous êtes visible sur le marketplace.</p>
+                </>
+              ) : (
+                <>
+                  <Star className="w-8 h-8 mb-3 text-orange-300" />
+                  <h3 className="text-xl font-semibold mb-2">Profil en attente</h3>
+                  <p className="text-sm text-orange-100 mb-4">Votre profil est en cours de vérification par l'équipe Nexcore.</p>
+                </>
+              )}
               <Link to="/expert/profile" className="inline-block px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition-colors text-sm">Voir mon profil</Link>
             </div>
             <div className="bg-black/40 light:bg-white/80 rounded-xl p-6 border border-white/10 light:border-slate-200 backdrop-blur-3xl">
-              <h3 className="font-semibold text-white light:text-slate-900 mb-4">Statistiques ce mois</h3>
+              <h3 className="font-semibold text-white light:text-slate-900 mb-4">Résumé</h3>
               <div className="space-y-3">
                 {[
-                  { label: 'Propositions envoyées', value: '8', color: 'text-white light:text-slate-900' },
-                  { label: "Taux d'acceptation", value: '62%', color: 'text-green-300 light:text-green-600' },
-                  { label: 'Revenus générés', value: '32 000 €', color: 'text-white light:text-slate-900' },
+                  { label: 'Projets actifs', value: String(activeProjects.length), color: 'text-blue-300 light:text-blue-600' },
+                  { label: 'Projets complétés', value: String(completedProjects.length), color: 'text-green-300 light:text-green-600' },
+                  { label: 'Opportunités disponibles', value: String(opportunities.length), color: 'text-cyan-300 light:text-cyan-600' },
                 ].map((stat, i) => (
                   <div key={i} className="flex items-center justify-between text-sm">
                     <span className="text-blue-100/70 light:text-slate-500">{stat.label}</span>
