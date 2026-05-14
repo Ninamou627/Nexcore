@@ -131,7 +131,7 @@ export function AIAssistant({ context = 'client', projectId }: AIAssistantProps)
         </button>
       )}
       {isOpen && (
-        <div className={`fixed bottom-2 right-2 md:bottom-6 md:right-6 w-[calc(100vw-1rem)] md:w-[420px] h-[calc(100vh-100px)] md:h-[650px] max-h-[85vh] md:max-h-[650px] rounded-2xl md:rounded-3xl shadow-2xl flex flex-col z-50 overflow-hidden animate-in fade-in slide-in-from-bottom-10 duration-300 ${isLight ? 'bg-white border border-slate-200' : 'bg-[#0a1628] border border-white/10 backdrop-blur-3xl'}`}>
+        <div className={`fixed bottom-2 right-2 md:bottom-6 md:right-6 w-[calc(100vw-1rem)] md:w-[420px] h-[calc(100vh-180px)] md:h-[550px] max-h-[80vh] md:max-h-[550px] rounded-2xl md:rounded-3xl shadow-2xl flex flex-col z-50 overflow-hidden animate-in fade-in slide-in-from-bottom-10 duration-300 ${isLight ? 'bg-white border border-slate-200' : 'bg-[#0a1628] border border-white/10 backdrop-blur-3xl'}`}>
           <div className={`p-4 md:p-5 flex items-center justify-between border-b ${isLight ? 'bg-gradient-to-r from-blue-500 to-blue-600 border-blue-600' : 'bg-gradient-to-r from-blue-600/40 to-cyan-500/20 border-white/10'}`}>
             <div className="flex items-center gap-3">
               <div className="size-8 md:size-10 bg-white/10 rounded-xl flex items-center justify-center border border-white/10"><Sparkles className="size-5 md:size-6 text-blue-200" /></div>
