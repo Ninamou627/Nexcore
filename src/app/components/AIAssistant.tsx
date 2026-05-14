@@ -131,19 +131,19 @@ export function AIAssistant({ context = 'client', projectId }: AIAssistantProps)
         </button>
       )}
       {isOpen && (
-        <div className={`fixed bottom-6 right-6 w-[420px] h-[650px] rounded-3xl shadow-2xl flex flex-col z-50 overflow-hidden animate-in fade-in slide-in-from-bottom-10 duration-300 ${isLight ? 'bg-white border border-slate-200' : 'bg-[#0a1628] border border-white/10 backdrop-blur-3xl'}`}>
-          <div className={`p-5 flex items-center justify-between border-b ${isLight ? 'bg-gradient-to-r from-blue-500 to-blue-600 border-blue-600' : 'bg-gradient-to-r from-blue-600/40 to-cyan-500/20 border-white/10'}`}>
+        <div className={`fixed bottom-4 right-4 sm:bottom-6 sm:right-6 w-[calc(100vw-2rem)] sm:w-[420px] h-[calc(100vh-120px)] sm:h-[650px] rounded-3xl shadow-2xl flex flex-col z-50 overflow-hidden animate-in fade-in slide-in-from-bottom-10 duration-300 ${isLight ? 'bg-white border border-slate-200' : 'bg-[#0a1628] border border-white/10 backdrop-blur-3xl'}`}>
+          <div className={`p-4 sm:p-5 flex items-center justify-between border-b ${isLight ? 'bg-gradient-to-r from-blue-500 to-blue-600 border-blue-600' : 'bg-gradient-to-r from-blue-600/40 to-cyan-500/20 border-white/10'}`}>
             <div className="flex items-center gap-3">
-              <div className="size-10 bg-white/10 rounded-xl flex items-center justify-center border border-white/10"><Sparkles className="size-6 text-blue-200" /></div>
+              <div className="size-9 sm:size-10 bg-white/10 rounded-xl flex items-center justify-center border border-white/10"><Sparkles className="size-5 sm:size-6 text-blue-200" /></div>
               <div>
-                <div className="font-bold text-lg tracking-tight text-white">Agent IA Nexcore</div>
-                <div className="text-[10px] uppercase tracking-widest text-blue-200/60 font-black">Prêt à agir pour vous</div>
+                <div className="font-bold text-base sm:text-lg tracking-tight text-white">Agent IA Nexcore</div>
+                <div className="text-[9px] sm:text-[10px] uppercase tracking-widest text-blue-200/60 font-black">Prêt à agir pour vous</div>
               </div>
             </div>
             <button onClick={() => setIsOpen(false)} className="size-8 hover:bg-white/10 rounded-lg transition-colors flex items-center justify-center border border-white/10"><X className="size-5 text-blue-100" /></button>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-6 space-y-6 scrollbar-hide">
+          <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6 scrollbar-hide">
             {messages.map((message) => (
               <div key={message.id}>
                 <div className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
@@ -189,7 +189,7 @@ export function AIAssistant({ context = 'client', projectId }: AIAssistantProps)
             )}
           </div>
 
-          <div className={`p-6 border-t ${isLight ? 'border-slate-200 bg-slate-50' : 'border-white/10 bg-black/20'}`}>
+          <div className={`p-4 sm:p-6 border-t ${isLight ? 'border-slate-200 bg-slate-50' : 'border-white/10 bg-black/20'}`}>
             <div className="flex items-center gap-3">
               <input type="text" value={inputValue} onChange={(e) => setInputValue(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                 placeholder="Demandez-moi d'agir..." disabled={isLoading}
