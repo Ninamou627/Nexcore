@@ -88,15 +88,36 @@ export function AIAssistant({ context = 'client', projectId }: AIAssistantProps)
     recognition.continuous = false;
     recognition.interimResults = false;
 
-    recognition.onstart = () => setIsRecording(true);
-    recognition.onend = () => setIsRecording(false);
-    recognition.onerror = () => setIsRecording(false);
+    recognition.onstart = () => {
+      console.log('Reconnaissance vocale démarrée...');
+      setIsRecording(true);
+    };
+
+    recognition.onend = () => {
+      console.log('Reconnaissance vocale terminée.');
+      setIsRecording(false);
+    };
+
+    recognition.onerror = (event: any) => {
+      console.error('Erreur de reconnaissance vocale:', event.error);
+      setIsRecording(false);
+      if (event.error === 'not-allowed') {
+        alert("L'accès au micro a été refusé. Veuillez autoriser le micro dans les paramètres de votre navigateur.");
+      }
+    };
+
     recognition.onresult = (event: any) => {
       const transcript = event.results[0][0].transcript;
+      console.log('Texte capturé:', transcript);
       setInputValue(prev => prev + (prev ? ' ' : '') + transcript);
     };
 
-    recognition.start();
+    try {
+      recognition.start();
+    } catch (e) {
+      console.error('Erreur lors du démarrage de la reconnaissance:', e);
+      setIsRecording(false);
+    }
   };
 
   const isLight = theme === 'light';
