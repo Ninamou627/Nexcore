@@ -1,5 +1,5 @@
 import { Link, Outlet, useParams } from 'react-router';
-import { Rocket, LayoutDashboard, ListChecks, MessageSquare, FolderOpen, Users } from 'lucide-react';
+import { Rocket, LayoutDashboard, ListChecks, MessageSquare, FolderOpen, Users, ShieldCheck } from 'lucide-react';
 import { AIAssistant } from '../../components/AIAssistant';
 import { useState, useEffect } from 'react';
 import { api } from '../../core/services/api';
@@ -27,6 +27,7 @@ export function Workspace() {
     { path: `/workspace/${id}/milestones`, label: 'Jalons', icon: ListChecks },
     { path: `/workspace/${id}/messages`, label: 'Messagerie', icon: MessageSquare },
     { path: `/workspace/${id}/files`, label: 'Fichiers', icon: FolderOpen },
+    { path: `/workspace/${id}/audit`, label: 'Audit & Qualité', icon: ShieldCheck },
   ];
 
   if (isLoading) return <div className="glass-shell min-h-screen flex items-center justify-center font-outfit text-slate-300 light:text-slate-600">Chargement du workspace...</div>;
